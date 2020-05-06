@@ -2,7 +2,17 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
+//import greeting,{idGen as funt, hello} from './tools';
+//import * as tools from './tools'; 
 import * as serviceWorker from './serviceWorker';
+
+// console.log(funt());
+// console.log(hello());
+// console.log(greeting);
+// console.log('tools' ,tools.hello());
+
+
+
 
 ReactDOM.render(
   <React.StrictMode>
