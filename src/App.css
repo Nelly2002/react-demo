@@ -36,3 +36,14 @@
     transform: rotate(360deg);
   }
 }
+
+
+.user-name{
+  color: brown;
+  font-size: 20px;
+}
+
+.user-surname{
+  color: green;
+  font-size: 20px;
+}
