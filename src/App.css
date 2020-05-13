@@ -1,5 +1,10 @@
+body{
+  background-color: #8f4df8;
+}
+
 .App {
   text-align: center;
+
 }
 
 .App-logo {
@@ -46,4 +51,12 @@
 .user-surname{
   color: green;
   font-size: 20px;
+}
+
+.task{
+  color:palevioletred;
+  background-color: white;
+  display: flex;
+  justify-content: space-between;
+  margin:15px auto;
 }
