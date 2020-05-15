@@ -1,57 +1,68 @@
-import React ,{Component} from 'react';
+import React, { Component } from 'react';
 import Task from './Task';
+import { idGen } from '../utils';
 
 
-class Todo extends Component{
-
-    
+class Todo extends Component {
     state = {
-        inputValue: '',
-        dataValue: '',
-        list:[]
-    };
-
-
-inputChangeHandler = (event)=>{
-    const nextState = {
-        inputValue: event.target.value,
+        items: [],
+        currentItem: {
+            text: '',
+            key: ''
+        }
     }
 
-    if (this.state.dataValue) {
-        nextState.dataValue = ''
+    inputChangeHandler = (event) => {
+        this.setState({
+            currentItem: {
+                text: event.target.value,
+                key: idGen()
+            }
+        })
     }
-    this.setState(nextState);
-}
 
-buttonClickHandler = ()=>{
-    this.setState({ dataValue: this.state.inputValue }) ;
-    const list = [...this.state.list];
-    list.push({
-        text:this.state.inputValue
-    });
-    this.setState({
-        list:list,
-        inputValue:''
-    })
-}
+    buttonClickHandler = (event) => {
+        const newItem = this.state.currentItem;
+        console.log(newItem);
+        if (newItem.text !== "") {
+            const newItems = [...this.state.items, newItem];
+            this.setState({
+                items: newItems,
+                currentItem: {
+                    text: '',
+                    key: ''
+                }
+            })
+        }
+    }
 
-    render(){
-       
-        
+
+    deleteItem = (key) => {
+        const filteredItems = this.state.items.filter(item =>
+            item.key !== key);
+        this.setState({
+            items: filteredItems
+        })
+    }
+
+
+    render() {
         return (
             <>
-                <input type="text"
-                value={this.state.inputValue}
-                 onChange={this.inputChangeHandler} 
-                 />
-                 <button onClick={this.buttonClickHandler}>Click me</button>
-                 <Task text={this.state.list.map((el,index)=><div className='task' key={index}>{el.text}
-                                                                <button>Delet</button>
-                                                            </div>)} />  
-    
+                <input type="text" placeholder='Enter text'
+                    value={this.state.currentItem.text}
+                    onChange={this.inputChangeHandler}
+                />
+                <button type='submit' className='add'
+                    onClick={this.buttonClickHandler}>Add</button>
+                <Task items={this.state.items}
+                    deleteItem={this.deleteItem}
+                />
             </>
-        );
+        )
     }
 }
+
+
 
 export default Todo
