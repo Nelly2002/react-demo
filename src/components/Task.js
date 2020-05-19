@@ -1,10 +1,13 @@
 import React from 'react'
-import './list.css';
+ import './list.css';
 
 function Task(props){
     const items = props.items;
     const listItems = items.map(item =>{
         return <div className="list" key={item.key}>
+                <input type="checkbox"  
+                onChange={props.onCheck}
+                />
                 <p>{item.text}
                 <button
                 onClick={()=> props.deleteItem(item.key)}
@@ -13,7 +16,6 @@ function Task(props){
                     Delete
                 </button>
                 </p>
-    
                 </div>
     })
     return (

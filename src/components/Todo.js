@@ -23,7 +23,6 @@ class Todo extends Component {
 
     buttonClickHandler = (event) => {
         const newItem = this.state.currentItem;
-        console.log(newItem);
         if (newItem.text !== "") {
             const newItems = [...this.state.items, newItem];
             this.setState({
@@ -34,17 +33,25 @@ class Todo extends Component {
                 }
             })
         }
+    
     }
 
-
-    deleteItem = (key) => {
+    
+    deleteItem = (key) => {  
         const filteredItems = this.state.items.filter(item =>
             item.key !== key);
+            
         this.setState({
             items: filteredItems
+          
         })
+        
     }
 
+    hendelCheck = (key)=>{
+        console.log(event.target.value);
+        
+    }
 
     render() {
         return (
@@ -57,6 +64,7 @@ class Todo extends Component {
                     onClick={this.buttonClickHandler}>Add</button>
                 <Task items={this.state.items}
                     deleteItem={this.deleteItem}
+                    onCheck={this.hendelCheck}
                 />
             </>
         )
