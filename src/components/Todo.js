@@ -1,76 +1,106 @@
 import React, { Component } from 'react';
-import Task from './Task';
+import Task from './Task/Task';
 import { idGen } from '../utils';
+import NewTask from './NewTask';
 
 
-class Todo extends Component {
+class Todo extends Component{
     state = {
-        items: [],
-        currentItem: {
-            text: '',
-            key: ''
-        }
+        tasks:[],
+        taskIds: new Set()
+    }
+    
+    addTask = (inputText)=>{
+
+        const tasks =[...this.state.tasks];
+        tasks.push({
+            id:idGen(),
+            text:inputText
+        });
+        this.setState({ tasks });   
+       
     }
 
-    inputChangeHandler = (event) => {
+    removeButtonHendler = (taskId)=> ()=>{
+       const newTasks = this.state.tasks.filter(({id}) => taskId !== id);
+       const newTaskIds = new Set(this.state.taskIds);
+       newTaskIds.delete(taskId);
+
         this.setState({
-            currentItem: {
-                text: event.target.value,
-                key: idGen()
-            }
-        })
+                tasks:newTasks,
+                taskIds:newTaskIds  
+        });    
     }
 
-    buttonClickHandler = (event) => {
-        const newItem = this.state.currentItem;
-        if (newItem.text !== "") {
-            const newItems = [...this.state.items, newItem];
-            this.setState({
-                items: newItems,
-                currentItem: {
-                    text: '',
-                    key: ''
-                }
-            })
+    handleCheck = (taskId)=> ()=>{
+        let taskIds  = new Set(this.state.taskIds);
+
+        if(taskIds.has(taskId)){
+            taskIds.delete(taskId);
         }
+        else{
+            taskIds.add(taskId);
+        }
+        this.setState({ taskIds });
+        
+    }
     
+    removeBulkHandler = ()=>{
+        let {tasks, taskIds} = this.state;
+        
+        taskIds.forEach(id =>{
+            tasks = tasks.filter(task => task.id !== id);
+        });
+
+        this.setState({
+            tasks,
+            taskIds:new Set()
+        });
+        
     }
 
-    
-    deleteItem = (key) => {  
-        const filteredItems = this.state.items.filter(item =>
-            item.key !== key);
+    render(){
+        const tasks = this.state.tasks
+        .map(({id, text}) => {
+            return (
+                <Task 
+                key={id} 
+                text={text}
+                onDelete = {this.removeButtonHendler(id)}
+                onCheck = {this.handleCheck(id)}
+                 />
+            )
             
-        this.setState({
-            items: filteredItems
-          
         })
-        
-    }
 
-    hendelCheck = (key)=>{
-        console.log(event.target.value);
-        
-    }
-
-    render() {
-        return (
+        return(
             <>
-                <input type="text" placeholder='Enter text'
-                    value={this.state.currentItem.text}
-                    onChange={this.inputChangeHandler}
-                />
-                <button type='submit' className='add'
-                    onClick={this.buttonClickHandler}>Add</button>
-                <Task items={this.state.items}
-                    deleteItem={this.deleteItem}
-                    onCheck={this.hendelCheck}
-                />
+                <div>
+                    <NewTask
+                    onTaskAdd={this.addTask}
+                    />
+                </div>
+                <div style={{
+                    textAlign:'center'
+                }}>
+                    {tasks}
+                    <button style={{
+                        backgroundColor:' rgb(199, 228, 93)',
+                        border:'none',
+                        padding:'9px',
+                        color:'black',
+                        borderRadius:'5px',
+                        fontSize:'15px'
+                    }}
+                    onClick = {this.removeBulkHandler}
+                    disabled = {!this.state.taskIds.size}
+                    >
+                    Remove
+                    </button>
+                </div>
             </>
-        )
+        );
     }
 }
-
-
 
 export default Todo

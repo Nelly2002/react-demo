@@ -1,7 +1,6 @@
 body{
-  background-color: #8f4df8;
+  background-color: #9266ff ;
 }
-
 .App {
   text-align: center;
 
@@ -43,7 +42,7 @@ body{
 }
 
 
-.user-name{
+/* .user-name{
   color: brown;
   font-size: 20px;
 }
@@ -68,4 +67,4 @@ input{
   margin:20px;
   background-color: rgb(199, 228, 93);  
   font-size: 17px;
-}
+} */
