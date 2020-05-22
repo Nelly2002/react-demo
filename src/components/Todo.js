@@ -12,10 +12,7 @@ class Todo extends Component {
     }
 
     addTask = (inputText) => {
-        //console.log(inputText);
-
         const tasks = [...this.state.tasks];
-        //console.log(tasks);
 
         tasks.push({
             id: idGen(),
@@ -26,8 +23,7 @@ class Todo extends Component {
     }
 
     removeButtonHendler = (taskId) => () => {
-        //console.log(taskId);
-
+      
         const newTasks = this.state.tasks.filter(({ id }) => taskId !== id);
         const newTaskIds = new Set(this.state.taskIds);
         newTaskIds.delete(taskId);
