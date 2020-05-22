@@ -14,10 +14,16 @@ import * as serviceWorker from './serviceWorker';
 
 
 
-ReactDOM.render(
+/* ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
+  document.getElementById('root')
+);
+ */
+
+ReactDOM.render(
+    <App />,
   document.getElementById('root')
 );
 
