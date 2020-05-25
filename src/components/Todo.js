@@ -61,20 +61,19 @@ class Todo extends Component {
         });
 
     }
-    setUpDate = (text, id) => {
-       
-        const newTasks = this.state.tasks;
-        newTasks.map(item => {
-            if (item.id === id) {
-                item.text = text
 
+    handleEdit = (id) => (text)=>{
+        const tasks = JSON.parse(JSON.stringify(this.state.tasks));
+         
+        for(let task of tasks){
+            if(task.id===id){
+                task.text=text;
+                break;
             }
-        })
+        }
         this.setState({
-            tasks: newTasks
-
-        })
-
+            tasks
+        });
     }
 
     render() {
@@ -88,7 +87,8 @@ class Todo extends Component {
                         text={text}
                         onDelete={this.removeButtonHendler(id)}
                         onCheck={this.handleCheck(id)}
-                        setUpDate={(e) => this.setUpDate(e.target.value, id)}
+                        onEdit ={this.handleEdit(id)}
+
                     />
                 )
 
