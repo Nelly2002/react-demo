@@ -1,31 +1,23 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
 import App from './App';
-//import greeting,{idGen as funt, hello} from './tools';
-//import * as tools from './tools'; 
+
 import * as serviceWorker from './serviceWorker';
 
-// console.log(funt());
-// console.log(hello());
-// console.log(greeting);
-// console.log('tools' ,tools.hello());
 
 
-
-
-/* ReactDOM.render(
+ReactDOM.render(
   <React.StrictMode>
     <App />
   </React.StrictMode>,
   document.getElementById('root')
 );
- */
 
+/* 
 ReactDOM.render(
     <App />,
   document.getElementById('root')
-);
+); */
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

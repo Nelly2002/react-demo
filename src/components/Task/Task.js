@@ -1,86 +1,108 @@
 import React, { Component } from 'react';
-import classes from './task.css'
+import './task.css';
+import { library } from '@fortawesome/fontawesome-svg-core';
+import { faTrash, faEdit ,faCheck,faTimes} from '@fortawesome/free-solid-svg-icons';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Card } from 'react-bootstrap';
+
+library.add(faTrash,faEdit,faCheck,faTimes);
+
 
 
 class Task extends Component {
-    constructor(props){
+    constructor(props) {
         super(props);
-        
+
         this.state = {
-            isEdit:false,
-            editText:props.text
+            isEdit: false,
+            editText: props.text
         }
     }
 
-    /* componentDidUpdate(prevProps,prevState){
-        console.log('Task updata');
-        
-    } */
-  /*   shouldComponentUpdate(prevProps, prevState) {
-        return prevProps.text !== this.props.text;
-    } */
+    /*   componentDidMount(){
+          console.log('Task munted');
+          
+      }
+      
+      componentDidUpdate(prevProps,prevState){
+          console.log('Task updata');
+          
+      }
+      shouldComponentUpdate(prevProps, prevState) {
+          return prevProps.text !== this.props.text;
+      }  */
 
-    handleEdit = ()=>{
+    handleEdit = () => {
         this.setState({
-            isEdit:true 
-        })
+            isEdit: true
+        });
+        this.props.onEdit();
     }
 
-    handleInputChange = (event)=>{
+    handleInputChange = (event) => {
         this.setState({
-            editText:event.target.value
+            editText: event.target.value
         });
     }
 
-    cancelEdit = ()=>{
+    cancelEdit = () => {
         this.setState({
-            isEdit:false,
-            editText:this.props.text
-        })
+            isEdit: false,
+            editText: this.props.text
+        });
+        this.props.onEdit();
     }
 
-    saveEdit = ()=>{
-        this.props.onEdit(this.state.editText);
+    saveEdit = () => {
+        this.props.onSaveEdit(this.state.editText);
         this.setState({
-            isEdit:false
+            isEdit: false
         });
+
     }
+
+ 
 
     render() {
 
-        const {text} = this.props;
-        const {isEdit}=this.state;
+        const { text } = this.props;
+        const { isEdit } = this.state;
+        const title =  text.slice(0,15);
 
         return (
+            <>
+                <Card style={{ width: '18rem',marginTop:'20px'}}>
+                    <Card.Header>
+                        <input type="checkbox"
+                            onChange={this.props.onCheck}
+                        />
+                        Featured
+                        </Card.Header>
+                    <Card.Body>
+                    <Card.Title>{title}</Card.Title>
+                        <Card.Text>
+                            {isEdit ?
+                                <input type="text"
+                                    value={this.state.editText}
+                                    onChange={this.handleInputChange}
+                                /> : <span>{text}</span>
+                            }
+                        </Card.Text>
+                        {
+                            isEdit ?
+                                <>
+                                    <FontAwesomeIcon className='faicons' icon='check' onClick={this.saveEdit} />
+                                    <FontAwesomeIcon className='faicons' icon='times' onClick={this.cancelEdit}></FontAwesomeIcon>
+                                </> :
+                                <>
+                                    <FontAwesomeIcon className='faicons' icon='edit' onClick={this.handleEdit} />
+                                    <FontAwesomeIcon className='faicons' icon='trash' onClick={this.props.onDelete} />
 
-            <div className={classes.task}  >
-                <input type="checkbox"
-                    onChange={this.props.onCheck}
-                />
-                {isEdit ?   
-                    <input type="text"
-                    value={this.state.editText}
-                    onChange={this.handleInputChange} 
-                />: <span>{text}</span>
-                }
-                {
-                    isEdit ?
-                    <>
-                        <button  onClick = {this.saveEdit}>save</button>
-                        <button onClick = {this.cancelEdit}>Cancel</button>
-                    </>:
-                    <>
-                    <button
-                    onClick={this.handleEdit}
-                    >Edit</button>
-                    <button
-                        onClick={this.props.onDelete}
-                    >x</button>
-                    </>
-                }
-               
-                
-            </div>
+                                </>
+                        }
+                    </Card.Body>
+                </Card>
+            </>
         );
     }
 

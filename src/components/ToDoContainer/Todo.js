@@ -1,14 +1,23 @@
 import React, { Component } from 'react';
-import Task from './Task/Task';
-import { idGen } from '../utils';
-import NewTask from './NewTask';
+import Task from '../Task/Task';
+import { idGen } from '../../helpers/utils';
+import NewTask from '../NewTask/NewTask';
+import {
+    Container,
+    Row,
+    Col,
+    Button
+} from 'react-bootstrap';
+import classes from './todo.module.css';
+
 
 
 class Todo extends Component {
 
     state = {
         tasks: [],
-        taskIds: new Set()
+        taskIds: new Set(),
+        isEditing: false
     }
 
     addTask = (inputText) => {
@@ -23,7 +32,7 @@ class Todo extends Component {
     }
 
     removeButtonHendler = (taskId) => () => {
-      
+
         const newTasks = this.state.tasks.filter(({ id }) => taskId !== id);
         const newTaskIds = new Set(this.state.taskIds);
         newTaskIds.delete(taskId);
@@ -62,18 +71,26 @@ class Todo extends Component {
 
     }
 
-    handleEdit = (id) => (text)=>{
+    handleSaveEdit = (id) => (text) => {
         const tasks = JSON.parse(JSON.stringify(this.state.tasks));
-         
-        for(let task of tasks){
-            if(task.id===id){
-                task.text=text;
+
+        for (let task of tasks) {
+            if (task.id === id) {
+                task.text = text;
                 break;
             }
         }
         this.setState({
-            tasks
+            tasks,
+            isEditing: false
         });
+    }
+
+    handleEdit = () => {
+        this.setState({
+            isEditing: !this.state.isEditing
+        });
+
     }
 
     render() {
@@ -82,14 +99,17 @@ class Todo extends Component {
             .map(({ id, text }) => {
 
                 return (
-                    <Task
-                        key={id}
-                        text={text}
-                        onDelete={this.removeButtonHendler(id)}
-                        onCheck={this.handleCheck(id)}
-                        onEdit ={this.handleEdit(id)}
+                    <Col  key={id} md='6' lg='4' xl='3' sm='6'>
+                        <Task
+                            text={text}
+                            onDelete={this.removeButtonHendler(id)}
+                            onCheck={this.handleCheck(id)}
+                            onSaveEdit={this.handleSaveEdit(id)}
+                            onEdit={this.handleEdit}
 
-                    />
+                        />
+                    </Col>
+
                 )
 
 
@@ -97,31 +117,30 @@ class Todo extends Component {
             })
 
         return (
-            <>
-                <div>
+            <Container fluid >
+                <Row className={classes.inputRow}>
+                    <Col>
                     <NewTask
-                        onTaskAdd={this.addTask}
-                    />
-                </div>
-                <div style={{
-                    textAlign: 'center'
-                }}>
+                    onTaskAdd={this.addTask}
+                    disabled={this.state.isEditing}
+                />
+                    </Col>
+                </Row>
+                <Row>
                     {tasks}
-                    <button style={{
-                        backgroundColor: ' rgb(199, 228, 93)',
-                        border: 'none',
-                        padding: '9px',
-                        color: 'black',
-                        borderRadius: '5px',
-                        fontSize: '15px'
-                    }}
+                </Row>
+                <Row>
+                <Button variant="danger" 
+                        style={{marginTop:'20px'}}
+                        className='mx-auto'
                         onClick={this.removeBulkHandler}
                         disabled={!this.state.taskIds.size}
-                    >
-                        Remove
-                    </button>
-                </div>
-            </>
+                >
+                    Remove
+                </Button>
+                </Row>
+            </Container>         
+        
         );
     }
 }

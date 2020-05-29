@@ -1,36 +1,17 @@
-.task {
-    width: 50%;
-    display: flex;
-    justify-content: space-between;
-    color: #fff;
-    background-color: #bb35f0;
-    border-radius: 5px;
-    margin:  15px auto;
-    padding: 5px;
-    
-}
 
-.task  button{
-    border: none;
-    background-color:rgb(230, 35, 236);
-    color: white;
-    border-radius: 7px;
-    padding: 7px;
+.faicons{
+    font-size: 20px;
+    color: crimson;
+    margin: 5px;
 }
-.task button:focus{
+input[type='text']:focus{
     outline: none;
 }
-.task input[type='checkbox']{
-    padding: 5px;
-}
-
-.task input[type='text']{
-    text-align: center;
+input[type='text']{
     background-color: transparent;
     border: none;
-    color: white;
-    font-size: 17px;
+    text-align: center;
+  
+
 }
-.task input[type='text']:focus{
-    outline: none;
-}
+
