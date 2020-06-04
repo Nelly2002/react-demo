@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import './task.css';
-import { library } from '@fortawesome/fontawesome-svg-core';
-import { faTrash, faEdit ,faCheck,faTimes} from '@fortawesome/free-solid-svg-icons';
+import classes  from './task.module.css';
+import { faTrashAlt, faEdit} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { Card } from 'react-bootstrap';
+import { Card,Button } from 'react-bootstrap';
+import EditTask from  '../EditTask';
 
-library.add(faTrash,faEdit,faCheck,faTimes);
 
 
 
@@ -14,8 +13,7 @@ class Task extends Component {
         super(props);
 
         this.state = {
-            isEdit: false,
-            editText: props.text
+            isEdit: false
         }
     }
 
@@ -39,39 +37,32 @@ class Task extends Component {
         this.props.onEdit();
     }
 
-    handleInputChange = (event) => {
-        this.setState({
-            editText: event.target.value
-        });
-    }
-
     cancelEdit = () => {
         this.setState({
-            isEdit: false,
-            editText: this.props.text
+            isEdit: false
         });
         this.props.onEdit();
     }
 
-    saveEdit = () => {
-        this.props.onSaveEdit(this.state.editText);
+    
+    saveEdit = (editedText) => {
+        this.props.onSaveEdit(editedText);
         this.setState({
             isEdit: false
         });
 
     }
 
- 
 
     render() {
 
         const { text } = this.props;
         const { isEdit } = this.state;
-        const title =  text.slice(0,15);
+        const title = text.slice(0, 15);
 
         return (
             <>
-                <Card style={{ width: '18rem',marginTop:'20px'}}>
+                <Card style={{ width: '18rem', marginTop: '20px' }}>
                     <Card.Header>
                         <input type="checkbox"
                             onChange={this.props.onCheck}
@@ -79,25 +70,30 @@ class Task extends Component {
                         Featured
                         </Card.Header>
                     <Card.Body>
-                    <Card.Title>{title}</Card.Title>
+                        <Card.Title>{title}</Card.Title>
                         <Card.Text>
-                            {isEdit ?
-                                <input type="text"
-                                    value={this.state.editText}
-                                    onChange={this.handleInputChange}
-                                /> : <span>{text}</span>
-                            }
+                            <span>{text}</span>
                         </Card.Text>
                         {
                             isEdit ?
+                            <EditTask
+                            text = {this.props.text}
+                            onCancelEdit={this.cancelEdit}
+                            onSaveEdit={this.saveEdit}
+                            />
+                                :
                                 <>
-                                    <FontAwesomeIcon className='faicons' icon='check' onClick={this.saveEdit} />
-                                    <FontAwesomeIcon className='faicons' icon='times' onClick={this.cancelEdit}></FontAwesomeIcon>
-                                </> :
-                                <>
-                                    <FontAwesomeIcon className='faicons' icon='edit' onClick={this.handleEdit} />
-                                    <FontAwesomeIcon className='faicons' icon='trash' onClick={this.props.onDelete} />
-
+                                     
+                                    <FontAwesomeIcon className={classes.faicons} icon={faEdit} onClick={this.handleEdit} />
+                                    <FontAwesomeIcon className={classes.faicons} icon={faTrashAlt} onClick={this.props.onDelete} />
+                                    <p>
+                                        <Button
+                                            variant="outline-danger"
+                                            onClick={this.props.onOpenModal}
+                                        >
+                                            View</Button>
+                                    </p>
+                                    
                                 </>
                         }
                     </Card.Body>

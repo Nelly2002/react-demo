@@ -9,6 +9,7 @@ import {
     Button
 } from 'react-bootstrap';
 import classes from './todo.module.css';
+import TaskModal from  '../TaskModal/TaskModal';
 
 
 
@@ -17,7 +18,8 @@ class Todo extends Component {
     state = {
         tasks: [],
         taskIds: new Set(),
-        isEditing: false
+        isEditing: false,
+        taskIndex:null
     }
 
     addTask = (inputText) => {
@@ -39,7 +41,8 @@ class Todo extends Component {
 
         this.setState({
             tasks: newTasks,
-            taskIds: newTaskIds
+            taskIds: newTaskIds,
+            taskIndex:null
         });
     }
 
@@ -93,20 +96,50 @@ class Todo extends Component {
 
     }
 
+    selectAllHandler = () => {
+        const taskIds = this.state.tasks.map(task => task.id);
+
+        this.setState({
+            taskIds: new Set(taskIds)
+        });
+
+
+    }
+
+    deselectAllHandler = () => {
+        this.setState({
+            taskIds: new Set
+        });
+    }
+
+    handleModalClose = ()=>{
+        this.setState({
+            taskIndex:null
+        });
+    }
+
+    handleModalOpen = (taskIndex)=> ()=>{
+        
+        this.setState({
+            taskIndex:taskIndex
+        });
+    }
+
     render() {
 
-        const tasks = this.state.tasks
-            .map(({ id, text }) => {
-
+        const {tasks,taskIds,isEditing,taskIndex}=this.state;
+         
+        const tasksArr = tasks.map((task,index) => {   
                 return (
-                    <Col  key={id} md='6' lg='4' xl='3' sm='6'>
+                    <Col key={task.id} md='6' lg='4' xl='3' sm='6'>
                         <Task
-                            text={text}
-                            onDelete={this.removeButtonHendler(id)}
-                            onCheck={this.handleCheck(id)}
-                            onSaveEdit={this.handleSaveEdit(id)}
+                            text={task.text}
+                            onDelete={this.removeButtonHendler(task.id)}
+                            onCheck={this.handleCheck(task.id)}
+                            onSaveEdit={this.handleSaveEdit(task.id)}
                             onEdit={this.handleEdit}
-
+                            isSelected={taskIds.has(task.id)}
+                            onOpenModal={this.handleModalOpen(index)}
                         />
                     </Col>
 
@@ -117,30 +150,63 @@ class Todo extends Component {
             })
 
         return (
+            <>
             <Container fluid >
                 <Row className={classes.inputRow}>
                     <Col>
-                    <NewTask
-                    onTaskAdd={this.addTask}
-                    disabled={this.state.isEditing}
-                />
+                        <NewTask
+                            onTaskAdd={this.addTask}
+                            disabled={isEditing}
+                        />
                     </Col>
                 </Row>
                 <Row>
-                    {tasks}
+                    {tasksArr}
                 </Row>
                 <Row>
-                <Button variant="danger" 
-                        style={{marginTop:'20px'}}
+                    <Button variant="danger"
+                        style={{ marginTop: '20px' }}
                         className='mx-auto'
                         onClick={this.removeBulkHandler}
-                        disabled={!this.state.taskIds.size}
-                >
-                    Remove
-                </Button>
+                        disabled={!taskIds.size}
+                    >
+                        Remove
+                    </Button>
+                    {
+                        tasks.length !== taskIds.size &&
+                        <Button variant="secondary"
+                            style={{ marginTop: '20px' }}
+                            className='mx-auto'
+                            onClick={this.selectAllHandler}
+                        >
+                            Select All
+                            </Button>
+                    }
+                    {
+                        !!taskIds.size &&
+                        <Button variant="secondary"
+                            style={{ marginTop: '20px' }}
+                            className='mx-auto'
+                            onClick={this.deselectAllHandler}
+                        >
+                            Deselect All
+                        </Button>
+                    }
+
                 </Row>
-            </Container>         
-        
+
+            </Container>
+            {taskIndex !== null &&
+            <TaskModal
+            show = {taskIndex !== null}
+            onHide={this.handleModalClose}
+            taskData = {tasks[taskIndex]} 
+            onDelete={this.removeButtonHendler(tasks[taskIndex].id)}
+            onSaveEdit={this.handleSaveEdit(tasks[taskIndex].id)}
+            onEdit={this.handleEdit}
+            />}
+            </>
+
         );
     }
 }
