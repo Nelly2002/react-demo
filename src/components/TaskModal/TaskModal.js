@@ -37,11 +37,13 @@ class TaskModal extends Component {
   render() {
 
     const { taskData } = this.props;
-    const title = taskData.text.slice(0, 15);
-
+    
+    const {title} = this.props;
+  
     return (
       <Modal
-        {...this.props}
+      show={this.props.show}
+      onHide={this.props.onHide}
         size="lg"
         aria-labelledby="contained-modal-title-vcenter"
         centered
@@ -54,12 +56,12 @@ class TaskModal extends Component {
         <Modal.Body>
           <h4>{title}</h4>
           <p>
-            {taskData.text}
+            {taskData}
           </p>
           {
             this.state.isEdit ?
             <EditTask
-            text={taskData.text}
+            text={taskData}
             onCancelEdit={this.cancelEdit}
             onSaveEdit={this.saveEdit}
           />:<>

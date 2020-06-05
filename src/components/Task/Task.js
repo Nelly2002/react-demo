@@ -56,15 +56,16 @@ class Task extends Component {
 
     render() {
 
-        const { text } = this.props;
+        const { data } = this.props;
         const { isEdit } = this.state;
-        const title = text.slice(0, 15);
+        const title = data.title;
 
         return (
             <>
                 <Card style={{ width: '18rem', marginTop: '20px' }}>
                     <Card.Header>
                         <input type="checkbox"
+                            checked={this.props.isSelected}
                             onChange={this.props.onCheck}
                         />
                         Featured
@@ -72,7 +73,7 @@ class Task extends Component {
                     <Card.Body>
                         <Card.Title>{title}</Card.Title>
                         <Card.Text>
-                            <span>{text}</span>
+                            <span>{data.description}</span>
                         </Card.Text>
                         {
                             isEdit ?

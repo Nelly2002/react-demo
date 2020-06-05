@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
 import Task from '../Task/Task';
-import { idGen } from '../../helpers/utils';
-import NewTask from '../NewTask/NewTask';
 import {
     Container,
     Row,
@@ -9,7 +7,8 @@ import {
     Button
 } from 'react-bootstrap';
 import classes from './todo.module.css';
-import TaskModal from  '../TaskModal/TaskModal';
+import TaskModal from '../TaskModal/TaskModal';
+import InputModal from '../InputModal/InputModal';
 
 
 
@@ -19,17 +18,46 @@ class Todo extends Component {
         tasks: [],
         taskIds: new Set(),
         isEditing: false,
-        taskIndex:null
+        taskIndex: null,
+        openModal: false
     }
 
-    addTask = (inputText) => {
-        const tasks = [...this.state.tasks];
+    componentDidMount() {
+        fetch('http://localhost:3001/tasks', {
+            method: 'GET',
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.setState({ tasks: data });
+            })
+            .catch(err => {
+                console.log('err', err);
+            });
+    }
 
-        tasks.push({
-            id: idGen(),
-            text: inputText
-        });
-        this.setState({ tasks });
+    addTask = (titleText,inputText) => {
+        const data = {
+            title: titleText,
+            description: inputText,
+        }
+
+        fetch('http://localhost:3001/tasks', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+            .then(res => res.json())
+            .then(data => {
+                this.setState({ 
+                    tasks: [...this.state.tasks, data] ,
+                    openModal: false
+                });
+            })
+            .catch(err => {
+                console.log('err', err);
+            });
 
     }
 
@@ -42,7 +70,7 @@ class Todo extends Component {
         this.setState({
             tasks: newTasks,
             taskIds: newTaskIds,
-            taskIndex:null
+            taskIndex: null
         });
     }
 
@@ -98,13 +126,9 @@ class Todo extends Component {
 
     selectAllHandler = () => {
         const taskIds = this.state.tasks.map(task => task.id);
+        this.setState({ taskIds: new Set(taskIds) });
+    };
 
-        this.setState({
-            taskIds: new Set(taskIds)
-        });
-
-
-    }
 
     deselectAllHandler = () => {
         this.setState({
@@ -112,99 +136,111 @@ class Todo extends Component {
         });
     }
 
-    handleModalClose = ()=>{
+    handleModalClose = () => {
         this.setState({
-            taskIndex:null
+            taskIndex: null
         });
     }
 
-    handleModalOpen = (taskIndex)=> ()=>{
-        
+    handleModalOpen = (taskIndex) => () => {
+
         this.setState({
-            taskIndex:taskIndex
+            taskIndex: taskIndex
         });
     }
 
+    handleInputModalClose = () => {
+        this.setState({ openModal: false })
+    }
+
+    handleOpenModal=()=>{
+        this.setState({ openModal: true })
+    }
     render() {
 
-        const {tasks,taskIds,isEditing,taskIndex}=this.state;
-         
-        const tasksArr = tasks.map((task,index) => {   
-                return (
-                    <Col key={task.id} md='6' lg='4' xl='3' sm='6'>
-                        <Task
-                            text={task.text}
-                            onDelete={this.removeButtonHendler(task.id)}
-                            onCheck={this.handleCheck(task.id)}
-                            onSaveEdit={this.handleSaveEdit(task.id)}
-                            onEdit={this.handleEdit}
-                            isSelected={taskIds.has(task.id)}
-                            onOpenModal={this.handleModalOpen(index)}
-                        />
-                    </Col>
+        const { tasks, taskIds, isEditing, taskIndex } = this.state;
 
-                )
+        const tasksArr = tasks.map((task, index) => {
+            return (
+                <Col key={task.id} md='6' lg='4' xl='3' sm='6'>
+                    <Task
+                        data={task}
+                        onDelete={this.removeButtonHendler(task.id)}
+                        onCheck={this.handleCheck(task.id)}
+                        onSaveEdit={this.handleSaveEdit(task.id)}
+                        onEdit={this.handleEdit}
+                        isSelected={taskIds.has(task.id)}
+                        onOpenModal={this.handleModalOpen(index)}
+                    />
+                </Col>
+
+            )
 
 
 
-            })
+        })
 
         return (
             <>
-            <Container fluid >
-                <Row className={classes.inputRow}>
-                    <Col>
-                        <NewTask
-                            onTaskAdd={this.addTask}
-                            disabled={isEditing}
-                        />
-                    </Col>
-                </Row>
-                <Row>
-                    {tasksArr}
-                </Row>
-                <Row>
-                    <Button variant="danger"
-                        style={{ marginTop: '20px' }}
-                        className='mx-auto'
-                        onClick={this.removeBulkHandler}
-                        disabled={!taskIds.size}
+                    <Button
+                        className={classes.addTask}
+                        variant="secondary"
+                        onClick={this.handleOpenModal}
                     >
-                        Remove
+                    Add Task    </Button>
+                <Container fluid >
+                    <Row>
+                        {tasksArr}
+                    </Row>
+                    <Row>
+                        <Button variant="danger"
+                            style={{ marginTop: '20px' }}
+                            className='mx-auto'
+                            onClick={this.removeBulkHandler}
+                            disabled={!taskIds.size}
+                        >
+                            Remove
                     </Button>
-                    {
-                        tasks.length !== taskIds.size &&
-                        <Button variant="secondary"
-                            style={{ marginTop: '20px' }}
-                            className='mx-auto'
-                            onClick={this.selectAllHandler}
-                        >
-                            Select All
+                        {
+                            tasks.length !== taskIds.size &&
+                            <Button variant="secondary"
+                                style={{ marginTop: '20px' }}
+                                className='mx-auto'
+                                onClick={this.selectAllHandler}
+                            >
+                                Select All
                             </Button>
-                    }
-                    {
-                        !!taskIds.size &&
-                        <Button variant="secondary"
-                            style={{ marginTop: '20px' }}
-                            className='mx-auto'
-                            onClick={this.deselectAllHandler}
-                        >
-                            Deselect All
+                        }
+                        {
+                            !!taskIds.size &&
+                            <Button variant="secondary"
+                                style={{ marginTop: '20px' }}
+                                className='mx-auto'
+                                onClick={this.deselectAllHandler}
+                            >
+                                Deselect All
                         </Button>
-                    }
+                        }
 
-                </Row>
+                    </Row>
 
-            </Container>
-            {taskIndex !== null &&
-            <TaskModal
-            show = {taskIndex !== null}
-            onHide={this.handleModalClose}
-            taskData = {tasks[taskIndex]} 
-            onDelete={this.removeButtonHendler(tasks[taskIndex].id)}
-            onSaveEdit={this.handleSaveEdit(tasks[taskIndex].id)}
-            onEdit={this.handleEdit}
-            />}
+                </Container>
+                {taskIndex !== null &&
+                    <TaskModal
+                        show={taskIndex !== null}
+                        onHide={this.handleModalClose}
+                        taskData={tasks[taskIndex].description}
+                        title={tasks[taskIndex].title}
+                        onDelete={this.removeButtonHendler(tasks[taskIndex].id)}
+                        onSaveEdit={this.handleSaveEdit(tasks[taskIndex].id)}
+                        onEdit={this.handleEdit}
+                    />}
+                <InputModal
+                    show={this.state.openModal}
+                    onHide={this.handleInputModalClose}
+                    onTaskAdd={this.addTask}
+                />
+
             </>
 
         );
