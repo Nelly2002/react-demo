@@ -8,7 +8,8 @@ import {
 } from 'react-bootstrap';
 import classes from './todo.module.css';
 import TaskModal from '../TaskModal/TaskModal';
-import InputModal from '../InputModal/InputModal';
+import Modal from '../Modal/Modal';
+import { withSnackbar } from 'notistack';
 
 
 
@@ -19,7 +20,9 @@ class Todo extends Component {
         taskIds: new Set(),
         isEditing: false,
         taskIndex: null,
-        openModal: false
+        editTaskIndex:null,
+        showAddTaskModal: false,
+        showEditTaskModal:false
     }
 
     componentDidMount() {
@@ -28,40 +31,89 @@ class Todo extends Component {
         })
             .then(res => res.json())
             .then(data => {
+                if (data.error) {
+                    throw data.error;
+                }
                 this.setState({ tasks: data });
             })
-            .catch(err => {
-                console.log('err', err);
+            .catch(error => {
+                this.props.enqueueSnackbar(error.toString(), {
+                    variant: 'error',
+                });
+
             });
     }
 
-    addTask = (titleText,inputText) => {
-        const data = {
-            title: titleText,
-            description: inputText,
-        }
 
+    addTask = (taskData) => {
+
+        
         fetch('http://localhost:3001/tasks', {
             method: 'POST',
-            body: JSON.stringify(data),
+            body: JSON.stringify(taskData),
             headers: {
                 'Content-Type': 'application/json'
             }
         })
-            .then(res => res.json())
-            .then(data => {
-                this.setState({ 
-                    tasks: [...this.state.tasks, data] ,
-                    openModal: false
-                });
-            })
-            .catch(err => {
-                console.log('err', err);
+        .then(res => res.json())
+        .then(response => {
+            if (response.error) {
+                throw response.error;
+            }
+            this.props.enqueueSnackbar('Task add successfully', {
+                variant: 'success',
             });
+            this.setState({
+                tasks: [...this.state.tasks, response],
+                showAddTaskModal: false
+            });
+
+        })
+        .catch(error => {
+            this.props.enqueueSnackbar(error.toString(), {
+                variant: 'error',
+            });
+        
+        })
 
     }
 
     removeButtonHendler = (taskId) => () => {
+
+        fetch(`http://localhost:3001/tasks/${taskId}`,{
+            method: 'Delete',
+
+        })
+        .then(res => res.json())
+        .then(response => {
+            if (response.error) {
+                throw response.error;
+            }
+            if(response.success){
+                this.props.enqueueSnackbar('Task Edited successfully', {
+                    variant: 'success',
+                });
+            }
+            else{
+                throw new Error('Something went wrong');
+            }
+            const tasks = [...this.state.tasks];
+            const taskIndex = this.state.tasks.findIndex(task => task.id === response.id);
+            tasks[taskIndex] = response;
+            this.setState({
+                tasks,
+                showEditTaskModal: false
+            });
+
+        })
+        .catch(error => {
+            this.props.enqueueSnackbar(error.toString(), {
+                variant: 'error',
+            });
+
+        })
+
+
 
         const newTasks = this.state.tasks.filter(({ id }) => taskId !== id);
         const newTaskIds = new Set(this.state.taskIds);
@@ -102,24 +154,15 @@ class Todo extends Component {
 
     }
 
-    handleSaveEdit = (id) => (text) => {
-        const tasks = JSON.parse(JSON.stringify(this.state.tasks));
+    handleSaveEdit = (id) => (title,description,taskData) => {
 
-        for (let task of tasks) {
-            if (task.id === id) {
-                task.text = text;
-                break;
-            }
-        }
-        this.setState({
-            tasks,
-            isEditing: false
-        });
+        
     }
 
-    handleEdit = () => {
+    handleEdit = (taskId) => {
         this.setState({
-            isEditing: !this.state.isEditing
+            showEditTaskModal:true,
+            editTaskIndex:this.state.tasks.findIndex(el=>el.id === taskId)
         });
 
     }
@@ -149,15 +192,51 @@ class Todo extends Component {
         });
     }
 
-    handleInputModalClose = () => {
-        this.setState({ openModal: false })
+    toggleTaskModal =(type)=> () => {
+        console.log(`show${type}TaskModal`)
+        this.setState({[`show${type}TaskModal`]: !this.state[`show${type}TaskModal`]})
     }
 
-    handleOpenModal=()=>{
-        this.setState({ openModal: true })
+    openAddTaskModal = () => {
+        this.setState({ showAddTaskModal: true })
     }
+
+    editTask = (taskId,taskData) =>{
+        fetch(`http://localhost:3001/tasks/${taskId}`,{
+            method: 'PUT',
+            body: JSON.stringify(taskData),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => res.json())
+        .then(response => {
+            if (response.error) {
+                throw response.error;
+            }
+            this.props.enqueueSnackbar('Task Edited successfully', {
+                variant: 'success',
+            });
+            const tasks = [...this.state.tasks];
+            const taskIndex = this.state.tasks.findIndex(task => task.id === response.id);
+            tasks[taskIndex] = response;
+            this.setState({
+                tasks,
+                showEditTaskModal: false
+            });
+
+        })
+        .catch(error => {
+            this.props.enqueueSnackbar(error.toString(), {
+                variant: 'error',
+            });
+
+        })
+
+
+    };
+
     render() {
-
         const { tasks, taskIds, isEditing, taskIndex } = this.state;
 
         const tasksArr = tasks.map((task, index) => {
@@ -182,13 +261,18 @@ class Todo extends Component {
 
         return (
             <>
-                    <Button
-                        className={classes.addTask}
-                        variant="secondary"
-                        onClick={this.handleOpenModal}
-                    >
-                    Add Task    </Button>
+
                 <Container fluid >
+                    <Row>
+                        <Col>
+                            <Button
+                                className={classes.addTask}
+                                variant="secondary"
+                                onClick={this.openAddTaskModal}
+                            >
+                                Add Task    </Button>
+                        </Col>
+                    </Row>
                     <Row>
                         {tasksArr}
                     </Row>
@@ -227,18 +311,27 @@ class Todo extends Component {
                 </Container>
                 {taskIndex !== null &&
                     <TaskModal
+                        
                         show={taskIndex !== null}
                         onHide={this.handleModalClose}
-                        taskData={tasks[taskIndex].description}
+                        description={tasks[taskIndex].description}
                         title={tasks[taskIndex].title}
                         onDelete={this.removeButtonHendler(tasks[taskIndex].id)}
                         onSaveEdit={this.handleSaveEdit(tasks[taskIndex].id)}
                         onEdit={this.handleEdit}
                     />}
-                <InputModal
-                    show={this.state.openModal}
-                    onHide={this.handleInputModalClose}
-                    onTaskAdd={this.addTask}
+                <Modal
+                    type='add'
+                    show={this.state.showAddTaskModal}
+                    onHide={this.toggleTaskModal('Add')}
+                    onAddTask={this.addTask}
+                />
+                 <Modal
+                    type='edit'
+                    data = {tasks[this.state.editTaskIndex]}
+                    show={this.state.showEditTaskModal}
+                    onHide={this.toggleTaskModal('Edit')}
+                    onEditTask={this.editTask}
                 />
 
             </>
@@ -247,4 +340,4 @@ class Todo extends Component {
     }
 }
 
-export default Todo
+export default withSnackbar(Todo); 

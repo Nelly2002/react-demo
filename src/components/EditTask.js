@@ -8,27 +8,56 @@ class EditTask extends Component {
         super(props)
 
         this.state={
-            editText:props.text
+            title:props.title,
+            description:props.description,
+
         }
 
     }
 
   
-    handleInputChange = (event) => {
+    /* handleInputChange = (event) => {
         this.setState({
             editText: event.target.value
         });
+    } */
+
+
+    onChangeTitleHandler = (event)=>{
+        this.setState({
+            title: event.target.value
+        });
+        /* this.setState({
+          [type]:event.target.value
+        })  */
+          
+    }
+
+    onChangeTextHandler = (event)=>{
+        this.setState({
+            description : event.target.value
+        });
+          
     }
 
     cancelEdit = () => {
         this.setState({
-            editText: this.props.text
+            title: this.props.title,
+            description:this.props.description
+
         });
         this.props.onCancelEdit();
     }
 
     saveEdit = () => {
-        this.props.onSaveEdit(this.state.editText);
+        const {title,description} = this.state;
+    
+    const taskData = {
+        title,
+        description
+      
+    };
+        this.props.onSaveEdit(title,description,taskData);
 
     }
 
@@ -36,9 +65,14 @@ class EditTask extends Component {
             return (
                 <>
                     <input type="text"
-                        value={this.state.editText}
-                        onChange={this.handleInputChange}
+                        value={this.state.title}
+                        onChange={this.onChangeTitleHandler}
                     />
+                    <input type="text"
+                        value={this.state.description}
+                        onChange={this.onChangeTextHandler}
+                    />
+                    
                     <FontAwesomeIcon  icon={faCheck} onClick={this.saveEdit} />
                     <FontAwesomeIcon  icon={faTimes} onClick={this.cancelEdit}></FontAwesomeIcon>
                 </>

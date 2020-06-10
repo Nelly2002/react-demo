@@ -17,48 +17,15 @@ class Task extends Component {
         }
     }
 
-    /*   componentDidMount(){
-          console.log('Task munted');
-          
-      }
-      
-      componentDidUpdate(prevProps,prevState){
-          console.log('Task updata');
-          
-      }
-      shouldComponentUpdate(prevProps, prevState) {
-          return prevProps.text !== this.props.text;
-      }  */
+  
 
-    handleEdit = () => {
-        this.setState({
-            isEdit: true
-        });
-        this.props.onEdit();
-    }
-
-    cancelEdit = () => {
-        this.setState({
-            isEdit: false
-        });
-        this.props.onEdit();
-    }
-
-    
-    saveEdit = (editedText) => {
-        this.props.onSaveEdit(editedText);
-        this.setState({
-            isEdit: false
-        });
-
-    }
 
 
     render() {
 
         const { data } = this.props;
         const { isEdit } = this.state;
-        const title = data.title;
+
 
         return (
             <>
@@ -68,10 +35,10 @@ class Task extends Component {
                             checked={this.props.isSelected}
                             onChange={this.props.onCheck}
                         />
-                        Featured
+                        {data.date}
                         </Card.Header>
                     <Card.Body>
-                        <Card.Title>{title}</Card.Title>
+                        <Card.Title>{data.title}</Card.Title>
                         <Card.Text>
                             <span>{data.description}</span>
                         </Card.Text>
@@ -85,7 +52,7 @@ class Task extends Component {
                                 :
                                 <>
                                      
-                                    <FontAwesomeIcon className={classes.faicons} icon={faEdit} onClick={this.handleEdit} />
+                                    <FontAwesomeIcon className={classes.faicons} icon={faEdit} onClick={()=>this.props.onEdit(data.id)} />
                                     <FontAwesomeIcon className={classes.faicons} icon={faTrashAlt} onClick={this.props.onDelete} />
                                     <p>
                                         <Button

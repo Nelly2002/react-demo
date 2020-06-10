@@ -18,8 +18,10 @@ class TaskModal extends Component {
     this.props.onEdit();
   }
 
-  saveEdit = (editedText) => {
-    this.props.onSaveEdit(editedText);
+  saveEdit = (title,description,taskData) => {
+    //console.log(taskData);
+    
+    this.props.onSaveEdit(title,description,taskData);
     this.setState({
       isEdit: false,
     });
@@ -36,9 +38,7 @@ class TaskModal extends Component {
 
   render() {
 
-    const { taskData } = this.props;
-    
-    const {title} = this.props;
+    const {title,description,date} = this.props;    
   
     return (
       <Modal
@@ -55,17 +55,22 @@ class TaskModal extends Component {
         </Modal.Header>
         <Modal.Body>
           <h4>{title}</h4>
+        
           <p>
-            {taskData}
+            Due date{date}
+          </p>
+          <p>
+            {description}
           </p>
           {
             this.state.isEdit ?
             <EditTask
-            text={taskData}
+            title={title}
+            description={description}
             onCancelEdit={this.cancelEdit}
             onSaveEdit={this.saveEdit}
           />:<>
-            <FontAwesomeIcon  icon={faEdit} onClick={this.handleEdit} />
+            <FontAwesomeIcon icon={faEdit} onClick={this.handleEdit} />
             <FontAwesomeIcon icon={faTrashAlt} onClick={this.props.onDelete} />
             </>
           }
