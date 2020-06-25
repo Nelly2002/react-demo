@@ -1,45 +1,53 @@
 import React, { Component } from 'react';
 import { Modal, Button } from 'react-bootstrap';
-import EditTask from '../EditTask';
+//import EditTask from '../EditTask';
 import { faTrashAlt, faEdit } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 class TaskModal extends Component {
 
   state = {
-    isEdit: false,
+    
   }
 
 
   handleEdit = () => {
-    this.setState({
-      isEdit: true
-    });
+    /* this.setState({
+      isEdit: true,
+      title:this.props.title
+
+    }); */
     this.props.onEdit();
   }
 
-  saveEdit = (title,description,taskData) => {
-    //console.log(taskData);
+  saveEdit = () => {
+   
+    const {taskData} = this.props;
+    console.log(taskData);
     
-    this.props.onSaveEdit(title,description,taskData);
-    this.setState({
-      isEdit: false,
-    });
+  /*   const {data} = this.props 
+    const taskData = {};
+
+    (title !== data.title) && (taskData.title = title);
+    (date !== data.date) && (taskData.date = date);
+    (description !== data.description) && (taskData.description = description);
+
+    this.props.onEditTask(id,taskData); */
   }
 
   cancelEdit = () => {
-    this.setState({
+  /*   this.setState({
       isEdit: false
-    });
+    }); */
     this.props.onEdit();
   }
 
 
 
   render() {
+    
+    const {data} = this.props;    
 
-    const {title,description,date} = this.props;    
-  
     return (
       <Modal
       show={this.props.show}
@@ -54,26 +62,19 @@ class TaskModal extends Component {
           </Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <h4>{title}</h4>
-        
+          <h4>{data.title}</h4>
           <p>
-            Due date{date}
+            {data.description}
           </p>
           <p>
-            {description}
+            Due date  {data.date}
           </p>
-          {
-            this.state.isEdit ?
-            <EditTask
-            title={title}
-            description={description}
-            onCancelEdit={this.cancelEdit}
-            onSaveEdit={this.saveEdit}
-          />:<>
-            <FontAwesomeIcon icon={faEdit} onClick={this.handleEdit} />
-            <FontAwesomeIcon icon={faTrashAlt} onClick={this.props.onDelete} />
-            </>
-          }
+          <p>
+              Created {data.created_at.slice(0,10)}
+          </p>
+          <FontAwesomeIcon icon={faEdit} onClick={this.handleEdit} />
+          <FontAwesomeIcon icon={faTrashAlt} onClick={this.props.onDelete} />
+  
          
         </Modal.Body>
         <Modal.Footer>

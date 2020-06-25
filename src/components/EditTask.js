@@ -24,6 +24,8 @@ class EditTask extends Component {
 
 
     onChangeTitleHandler = (event)=>{
+  
+        
         this.setState({
             title: event.target.value
         });
@@ -62,6 +64,8 @@ class EditTask extends Component {
     }
 
         render() {
+            console.log(this.state);
+            
             return (
                 <>
                     <input type="text"

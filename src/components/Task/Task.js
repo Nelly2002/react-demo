@@ -4,7 +4,8 @@ import { faTrashAlt, faEdit} from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { Card,Button } from 'react-bootstrap';
 import EditTask from  '../EditTask';
-
+import {formDate} from '../../helpers/utils';
+import {Link} from 'react-router-dom';
 
 
 
@@ -35,7 +36,9 @@ class Task extends Component {
                             checked={this.props.isSelected}
                             onChange={this.props.onCheck}
                         />
-                        {data.date}
+                        <p> {formDate(data.date)}</p>
+                        <p> {formDate(data.created_at)}</p>
+                       
                         </Card.Header>
                     <Card.Body>
                         <Card.Title>{data.title}</Card.Title>
@@ -45,9 +48,7 @@ class Task extends Component {
                         {
                             isEdit ?
                             <EditTask
-                            text = {this.props.text}
-                            onCancelEdit={this.cancelEdit}
-                            onSaveEdit={this.saveEdit}
+
                             />
                                 :
                                 <>
@@ -59,7 +60,15 @@ class Task extends Component {
                                             variant="outline-danger"
                                             onClick={this.props.onOpenModal}
                                         >
-                                            View</Button>
+                                            Open in modal</Button>
+                                            <Link to={`/task/${data.id}`}>
+                                            <Button
+                                            variant="outline-danger"
+                                            onClick={this.props.onOpenModal}
+                                        >
+                                        Open in separet page </Button>
+                                            </Link>
+                                          
                                     </p>
                                     
                                 </>

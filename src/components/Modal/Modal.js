@@ -105,7 +105,7 @@ class AddEditModal extends Component {
             <Form.Label>Choose date</Form.Label>
             <p>
               <input type="date"
-              value={date}
+              value={date.slice(0,10)}
               onChange={this.onChangeHandler('date')}
               />
             </p>

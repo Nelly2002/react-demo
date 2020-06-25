@@ -3,3 +3,7 @@
 [0514/010241.580:ERROR:exception_snapshot_win.cc(98)] thread ID 16420 not found in process
 [0604/003402.628:ERROR:settings.cc(320)] Settings magic is not 1129342067
 [0608/232807.428:ERROR:process_info.cc(359)] UncheckedAllocate
+[0610/221728.943:ERROR:process_reader_win.cc(151)] SuspendThread: Отказано в доступе. (0x5)
+[0610/221728.955:ERROR:exception_snapshot_win.cc(98)] thread ID 7432 not found in process
+[0612/222319.248:ERROR:process_info.cc(359)] UncheckedAllocate
+[0615/202252.420:ERROR:http_transport_win.cc(276)] WinHttpSendRequest: Операция успешно завершена. (0x0)
