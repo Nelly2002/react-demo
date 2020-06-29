@@ -1,7 +1,8 @@
 import React, { Component } from 'react';
 import { Modal, Button, InputGroup, FormControl ,Form} from 'react-bootstrap';
 import PropTypes from 'prop-types';
-
+import {connect}  from 'react-redux';
+import addTask from '../../store/actions/addTask';
 
 
 class AddEditModal extends Component {
@@ -17,8 +18,6 @@ class AddEditModal extends Component {
     this.state = this.initialState;
   }
   
-
-
 
   componentDidUpdate(prevProps,prevState){
       if(prevProps.show && !this.props.show){
@@ -45,7 +44,7 @@ class AddEditModal extends Component {
       description
     };
 
-    this.props.onAddTask(taskData)
+    this.props.addTask(taskData)
   }
 
   editTask = ()=>{
@@ -142,7 +141,11 @@ AddEditModal.propTypes = {
     onEditTask:PropTypes.func
 };
 
-export default AddEditModal;
+
+
+export default connect(null,{
+  addTask,
+})(AddEditModal);
 
 
 

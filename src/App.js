@@ -1,7 +1,6 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './App.css';
-// import Request from './Demo/Request';
 import NavMenu from './components/NavMenu/NavMenu';
 import ToDo from './components/containers/ToDo/ToDo';
 import About from './components/containers/About/About';
@@ -14,12 +13,6 @@ import {Route, Switch, Redirect} from 'react-router-dom';
 import Loader from './components/loader/loader';
 
 class App extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {
-      counter: 0
-    };
-}
 
  componentDidUpdate(prevProps){
   if(!prevProps.success && this.props.success){
@@ -39,18 +32,11 @@ class App extends React.Component{
 }
 
 
-handleClick = ()=>{
-  this.setState({
-    counter: this.state.counter+1
-  });
-}
-
   render(){
-// console.log('App render starts', this.props);
 
   return (
     <div className={'App'}>
-    <NavMenu/>   
+  <NavMenu/> 
 
     <Switch>
     <Route path='/' exact component={ToDo}/>
@@ -60,7 +46,6 @@ handleClick = ()=>{
     <Route path='/404' exact component={NotFound}/>
     <Redirect to='/404' />
     </Switch>
-
     {this.props.loading && <Loader/>}
     </div>
   );

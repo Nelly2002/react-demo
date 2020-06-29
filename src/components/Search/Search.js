@@ -5,8 +5,11 @@ import {
     FormControl,
     Button,
     SplitButton,
-    Dropdown
+    Dropdown,
+    Navbar,
+    Nav,
 } from 'react-bootstrap';
+import PropTypes from 'prop-types';
 
 
 
@@ -84,13 +87,13 @@ class Search extends Component {
         this.setState({ search: event.target.value });
     }
 
-    submitHandler = (type) => (event)=> {
+    submitHandler = (type) => (event) => {
         if (type === 'reset') {
             this.props.onSubmit({});
             this.setState(this.defaultState);
         }
 
-        if((!type && event.key === 'Enter') || type === 'submit' ){
+        if ((!type && event.key === 'Enter') || type === 'submit') {
             const { sortId, search, filterId, date } = this.state;
             const data = {
                 search: search,
@@ -102,7 +105,7 @@ class Search extends Component {
             this.props.onSubmit(data);
             this.setState(this.defaultState);
         }
-        
+
 
     }
 
@@ -125,8 +128,43 @@ class Search extends Component {
 
         return (
             <>
-                <InputGroup className="mb-3">
+                <Navbar >
+                    <Nav className="mr-auto">
+                        <SplitButton
+                            variant='primary'
+                            title={sortTitle || 'Sort'}
+                        >
+                            {this.sort.map(({ id, title }) =>
+                                <Dropdown.Item
+                                    key={id}
+                                    onClick={this.selectHandler('sort', id, title)}
+                                    className={`${sortId === id ? classes.active : ''} ${classes.sortItem}`}
+                                >
+                                    {title}
+                                </Dropdown.Item>)
+                            }
+                        </SplitButton>
+
+
+                        <SplitButton
+                            style = {{margin:'0 15px'}}
+                            variant='primary'
+                            title={filterTitle || 'Filter'}
+                        >
+                            {this.filter.map(({ id, title }) =>
+                                <Dropdown.Item
+                                    key={id}
+                                    onClick={this.selectHandler('filter', id, title)}
+                                    className={`${filterId === id ? classes.active : ''} ${classes.sortItem}`}
+                                >
+                                    {title}
+                                </Dropdown.Item>)
+                            }
+                        </SplitButton>
+                        <input type="date" value={date} onChange={this.dateChangeHandler} />
+                    </Nav>
                     <FormControl
+                        style={{ maxWidth: '400px' }}
                         placeholder="Create new task"
                         aria-label="Create new task"
                         aria-describedby="basic-addon2"
@@ -135,62 +173,28 @@ class Search extends Component {
                         onKeyDown={this.submitHandler()}
                     />
                     <InputGroup.Append>
-                        <Button
-                            variant="outline-primary"
-                            onClick={this.submitHandler('submit')}
-                            
-                        >
-                            Search
+                    <Button
+                        variant="outline-primary"
+                        onClick={this.submitHandler('submit')}
+
+                    >
+                        Search
                 </Button>
-                    </InputGroup.Append>
-                </InputGroup>
-
-
-
-
-                <SplitButton
-                    variant='primary'
-                    title={sortTitle || 'Sort'}
-                >
-                    {this.sort.map(({ id, title }) =>
-                        <Dropdown.Item
-                            key={id}
-                            onClick={this.selectHandler('sort', id, title)}
-                            className={`${sortId === id ? classes.active : ''} ${classes.sortItem}`}
-                        >
-                            {title}
-                        </Dropdown.Item>)
-                    }
-                </SplitButton>
-
-
-                <SplitButton
-                    variant='primary'
-                    title={filterTitle || 'Filter'}
-                >
-                    {this.filter.map(({ id, title }) =>
-                        <Dropdown.Item
-                            key={id}
-                            onClick={this.selectHandler('filter', id, title)}
-                            className={`${filterId === id ? classes.active : ''} ${classes.sortItem}`}
-                        >
-                            {title}
-                        </Dropdown.Item>)
-                    }
-                </SplitButton>
-                <input type="date" value={date} onChange={this.dateChangeHandler} />
-
                 <Button
                     variant="outline-secondary"
                     onClick={this.submitHandler('reset')}
                 >
                     Reset
-  </Button>
-
+                </Button>
+                    </InputGroup.Append>
+                </Navbar>
             </>
         );
     }
 }
 
+Search.propTypes = {
+    onSubmit: PropTypes.func.isRequired
+};
 
 export default Search;

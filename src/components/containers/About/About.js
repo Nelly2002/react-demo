@@ -1,20 +1,15 @@
-import React, { Component } from 'react';
+import React  from 'react';
 import classes from './about.module.css';
 
 
 
 
-class About extends Component {
-
-   
-
-    render() {
+function About (){
        
-        return (
-           <p className={classes.heading}>About us page</p>
+    return (
+        <h3 className={classes.heading}>About us page</h3>
 
-        );
-    }
+    );
 }
 
 export default About; 
