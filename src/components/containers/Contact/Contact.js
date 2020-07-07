@@ -22,7 +22,6 @@ function Contact(props) {
            message
         };
         
-        console.log(taskData)
         props.contact(taskData);
         
         setNameValue('');

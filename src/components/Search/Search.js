@@ -165,8 +165,8 @@ class Search extends Component {
                     </Nav>
                     <FormControl
                         style={{ maxWidth: '400px' }}
-                        placeholder="Create new task"
-                        aria-label="Create new task"
+                        placeholder="Search task"
+                        aria-label="Search task"
                         aria-describedby="basic-addon2"
                         value={search}
                         onChange={this.inputChangeHandler}

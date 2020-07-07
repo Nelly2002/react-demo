@@ -118,7 +118,8 @@ export default function taskReducer(state = defaultState, action) {
         case actionTypes.CONTACT_REQUEST:
             return {
                 ...state,
-                loading: true
+                loading: true,
+                success:null
             };
         case actionTypes.CONTACT_SUCCESS:
             return {

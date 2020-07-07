@@ -177,8 +177,7 @@ class ToDo extends Component {
                     <Row>
                         <Col>
                         <Button
-                            style = {{marginTop:'15px'}}
-                            className='mx-auto'
+                           className={`mx-auto ${classes.addButton}`}
                             variant='primary'
                             onClick={this.toggleTaskModal('Add')}
                             >
@@ -188,7 +187,7 @@ class ToDo extends Component {
                     </Row>
 
 
-                    <Row>
+                    <Row  className={classes.addButton}>
                         {tasksArr.length ? 
                             tasksArr :
                             <h2 style = {{margin:'auto'}}>There are no tasks yet!</h2>
@@ -197,8 +196,7 @@ class ToDo extends Component {
 
                     <Row>
                         <Button
-                            style = {{marginTop:'15px'}}
-                            className='mx-auto'
+                            className={`mx-auto ${classes.bottombuttons}`}
                             variant='danger'
                             onClick={this.removeBulkHandler}
                             disabled={!taskIds.size}
@@ -208,8 +206,7 @@ class ToDo extends Component {
                         {
                             tasks.length !== taskIds.size &&
                             <Button
-                                style = {{marginTop:'15px'}}
-                                className='mx-auto'
+                              className={`mx-auto ${classes.bottombuttons}`}
                                 variant='secondary'
                                 onClick={this.selectAllHandler}
                             >
@@ -220,8 +217,7 @@ class ToDo extends Component {
 
                         {!!taskIds.size &&
                             <Button
-                                style = {{marginTop:'15px'}}
-                                className='mx-auto'
+                                className={`mx-auto ${classes.bottombuttons}`}
                                 variant='secondary'
                                 onClick={this.deSelectAllHandler}
                             >
